@@ -21,11 +21,12 @@ var connection = mysql.createConnection({
 
 
    //회원가입
-  app.post('/user/join', function (req, res) {
-    var UserEmail = req.body.UserEmail;
-    var UserPwd = req.body.UserPwd;
-    var UserName = req.body.UserName;
-    var UserPhoneNumber = req.body.UserPhoneNumber;
+  app.post('/register/', function (req, res) {
+      var post_data = req.body;
+    var UserEmail = post_data.UserEmail;
+    var UserPwd = post_data.UserPwd;
+    var UserName = post_data.UserName;
+    var UserPhoneNumber = post_data.UserPhoneNumber;
 
     // 삽입을 수행하는 sql문.
     var sql = 'INSERT INTO Users (UserEmail, UserPwd, UserName, UserPhoneNumber) VALUES (?, ?, ?, ?)';
@@ -48,3 +49,16 @@ var connection = mysql.createConnection({
         });
     });
 });
+
+app.post('/login/',function(req,res){
+    var post_data = req.body;
+    var loginEmail = post_data.UserEmail;
+    var loginPwd = post_data.UserPwd;
+
+    connection.query('SELECT * FROM Users where UserEmail =?'),[loginEmail],function(err,result,fields){
+        connection.on('error',function(err){
+            console.log('[MySQL ERROR]',err); 
+        });
+        
+    }
+})
