@@ -1,26 +1,44 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const flash = require('connect-flash');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+require('dotenv').config(); //.env 설정
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
-var app = express();
+const { sequelize } = require('./models');
+sequelize.sync();
+const prod = process.env.NODE_ENV === 'production';
 
+
+const app = express();
+
+app.set('port', process.env.PORT || 3000); //포트 설정
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(flash()); //1회성 메세지
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', (req, res) => { 
+  res.send('workman 백엔드 정상 동작!');
+});
+
+//라우터 주소 설정
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -36,6 +54,10 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+app.listen(prod ? app.get('port') : 3000, () => {
+  console.log('info', `${app.get('port')}번 포트에서 서버 실행중입니다.`);
 });
 
 module.exports = app;
