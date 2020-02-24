@@ -4,11 +4,14 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+
 require('dotenv').config(); //.env 설정
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
+const employeeRouter = require('./routes/employee');
+const groupRouter = require('./routes/group');
 
 const { sequelize } = require('./models');
 sequelize.sync();
@@ -29,7 +32,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => { 
+app.get('/', (req, res) => {
   res.send('workman 백엔드 정상 동작!');
 });
 
@@ -37,7 +40,8 @@ app.get('/', (req, res) => {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
-
+app.use('/employee', employeeRouter);
+app.use('/group', groupRouter);
 
 
 // catch 404 and forward to error handler

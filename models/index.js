@@ -28,11 +28,15 @@ fs
 //TABLE 객체 선언
 db.User = require('./user')(sequelize, Sequelize);
 db.Auth = require('./auth')(sequelize, Sequelize);
-
+db.Group = require('./group')(sequelize, Sequelize);
+db.Employee = require('./employee')(sequelize, Sequelize);
 
 
 //TABLE 관계 맺기
-
+//,foreignKey: 'groupId'
+//,foreignKey: 'employeeId'
+db.Group.belongsToMany(db.Employee, { through: 'Group_Employee',foreignKey: 'groupId'});
+db.Employee.belongsToMany(db.Group, { through: 'Group_Employee',foreignKey: 'employeeId'});
 
 
 
